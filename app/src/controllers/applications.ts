@@ -18,15 +18,17 @@ function processFile(filePath: string): number {
 
 export async function create(req: Request, res: Response) {
     if (req.file) {
+        const id: unknown = req.params.id;
         const doc = await ApplicationModel.create({
             resumeFilename: req.file.filename,
             wordCount: processFile(req.file.path),
-            jobId: req.params.id
+            jobId: id
         });
-        await attachApplicationToJob(req.params.id, doc._id);
+        const docId: unknown = doc._id;
+        await attachApplicationToJob(id as string, docId as string);
         res.json(doc);
     } else {
-        res.status(400).json({ message: 'missing resume'});
+        res.status(400).json({ message: 'missing resume' });
     }
 }
 
